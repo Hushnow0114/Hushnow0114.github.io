@@ -3,147 +3,386 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>汽车G值监测 - 重力补偿版</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>我的个人主页</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary-color: rgba(255, 255, 255, 0.2);
+            --secondary-color: rgba(255, 255, 255, 0.1);
+            --text-color: #333;
+            --bg-color: rgba(255, 255, 255, 0.5);
+            --card-bg: rgba(255, 255, 255, 0.25);
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --accent-color: #6366f1;
+            --transition: all 0.3s ease;
+        }
+
+        .dark-mode {
+            --primary-color: rgba(0, 0, 0, 0.2);
+            --secondary-color: rgba(0, 0, 0, 0.1);
+            --text-color: #f0f0f0;
+            --bg-color: rgba(0, 0, 0, 0.5);
+            --card-bg: rgba(0, 0, 0, 0.25);
+            --shadow-color: rgba(255, 255, 255, 0.05);
+            --accent-color: #818cf8;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Roboto', 'Arial', sans-serif;
+            transition: var(--transition);
         }
-        
+
         body {
-            background: linear-gradient(135deg, #1a237e, #283593);
-            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-color);
+            background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
+            overflow-x: hidden;
         }
-        
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.dmoe.cc/random.php') no-repeat center center/cover;
+            z-index: -1;
+        }
+
         .container {
-            max-width: 900px;
+            width: 100%;
+            max-width: 1200px;
             margin: 0 auto;
         }
-        
-        header {
-            text-align: center;
+
+        .glass-card {
+            background: var(--bg-color);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid var(--primary-color);
+            box-shadow: 0 8px 32px 0 var(--shadow-color);
+            padding: 30px;
             margin-bottom: 30px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
-        
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--card-bg);
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary-color);
+            margin-bottom: 20px;
+            box-shadow: 0 8px 16px var(--shadow-color);
+        }
+
         h1 {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             margin-bottom: 10px;
-            color: #bb86fc;
         }
-        
-        .explanation {
-            background: rgba(3, 218, 198, 0.15);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-        
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        
-        .gauge {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .gauge-title {
+
+        .tagline {
             font-size: 1.2rem;
-            margin-bottom: 15px;
-            color: #bb86fc;
+            opacity: 0.8;
+            margin-bottom: 30px;
         }
-        
-        .status-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .status-item {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-        }
-        
-        .value {
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin: 5px 0;
-        }
-        
-        .x-axis { color: #ff5252; }
-        .y-axis { color: #4caf50; }
-        .z-axis { color: #448aff; }
-        .total-axis { color: #ffab00; }
-        
-        .axis-label {
-            font-size: 0.9rem;
-            color: #ccc;
-        }
-        
-        .controls {
+
+        .social-links {
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin: 20px 0;
+            margin: 30px 0;
+            flex-wrap: wrap;
         }
-        
-        button {
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 12px 25px;
-            background: #03dac6;
-            color: #000;
+            background: var(--card-bg);
+            border-radius: 50px;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            border: 1px solid var(--primary-color);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px var(--shadow-color);
+        }
+
+        .social-btn i {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+
+        .youtube { color: #ff0000; }
+        .tiktok { color: #000000; }
+        .bilibili { color: #fb7299; }
+
+        .dark-mode .tiktok { color: #ffffff; }
+
+        .nav {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            margin: 0 10px;
+            background: var(--card-bg);
             border: none;
-            border-radius: 30px;
+            border-radius: 8px;
+            color: var(--text-color);
             font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--primary-color);
         }
-        
-        button:hover {
-            background: #00efd9;
-            transform: scale(1.05);
+
+        .nav-btn.active {
+            background: var(--accent-color);
+            color: white;
         }
-        
-        .calibration-panel {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .content-card {
+            background: var(--card-bg);
             border-radius: 15px;
-            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid var(--primary-color);
+            transition: transform 0.3s ease;
         }
-        
-        .calibration-steps {
-            margin: 15px 0;
-            padding-left: 20px;
+
+        .content-card:hover {
+            transform: translateY(-5px);
         }
-        
-        .calibration-steps li {
-            margin-bottom: 10px;
-            line-height: 1.5;
+
+        .content-card h3 {
+            margin-bottom: 15px;
+            color: var(--accent-color);
         }
-        
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .video-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--primary-color);
+        }
+
+        .video-thumb {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+
+        .video-info {
+            padding: 15px;
+        }
+
+        .video-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .video-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .platform-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .youtube-badge {
+            background: rgba(255, 0, 0, 0.1);
+            color: #ff0000;
+        }
+
+        .tiktok-badge {
+            background: rgba(0, 0, 0, 0.1);
+            color: #000000;
+        }
+
+        .bilibili-badge {
+            background: rgba(251, 114, 153, 0.1);
+            color: #fb7299;
+        }
+
+        .dark-mode .tiktok-badge {
+            background: rgba(255, 255, 255, 0.476);
+            color: #fffffffe;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
         @media (max-width: 768px) {
-            .dashboard, .status-grid {
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .social-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .social-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+            
+            .nav {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                max-width: 200px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .video-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -151,336 +390,255 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>汽车G值监测 - 重力补偿版</h1>
-            <div class="explanation">
-                <strong>为什么手机静止时Z轴显示1G？</strong> 这是因为加速度计测量的是包括重力在内的所有加速度。
-                当手机静止时，重力加速度(9.8m/s²)作用于Z轴，显示为1G。本应用已添加重力补偿功能，使静止时显示接近0G。
+        <div class="glass-card">
+            <header>
+                <div class="logo">
+                    <i class="fas fa-star"></i>
+                    <span>我的空间</span>
+                </div>
+                <label class="theme-switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
+            </header>
+
+            <section class="hero">
+                <img src="https://api.mtyqx.cn/tapi/random.php" alt="头像" class="avatar">
+                <h1>SakuraIXI</h1>
+                <p class="tagline">创意内容创作者 & 数字艺术家</p>
+                
+                <div class="social-links">
+                    <a href="www.youtube.com/@SakuraIXI" class="social-btn youtube">
+                        <i class="fab fa-youtube"></i>
+                        YouTube
+                    </a>
+                    <a href="www.tiktok.com/t/ZT6s4Mwf8/" class="social-btn tiktok">
+                        <i class="fab fa-tiktok"></i>
+                        TikTok
+                    </a>
+                    <a href="space.bilibili.com/642528592?spm_id_from=333.1007.0.0" class="social-btn bilibili">
+                        <i class="fab fa-bilibili"></i>
+                        Bilibili
+                    </a>
+                </div>
+            </section>
+
+            <div class="nav">
+                <button class="nav-btn active" data-page="home">主页</button>
+                <button class="nav-btn" data-page="about">关于我</button>
+                <button class="nav-btn" data-page="projects">作品集</button>
+                <button class="nav-btn" data-page="contact">联系我</button>
             </div>
-        </header>
-        
-        <div class="status-grid">
-            <div class="status-item">
-                <div class="axis-label">X轴 (左右加速度)</div>
-                <div id="x-value" class="value x-axis">0.00 G</div>
-            </div>
-            <div class="status-item">
-                <div class="axis-label">Y轴 (前后加速度)</div>
-                <div id="y-value" class="value y-axis">0.00 G</div>
-            </div>
-            <div class="status-item">
-                <div class="axis-label">Z轴 (垂直加速度)</div>
-                <div id="z-value" class="value z-axis">0.00 G</div>
-            </div>
-            <div class="status-item">
-                <div class="axis-label">合成加速度</div>
-                <div id="total-value" class="value total-axis">0.00 G</div>
-            </div>
-        </div>
-        
-        <div class="dashboard">
-            <div class="gauge">
-                <div class="gauge-title">实时加速度监测</div>
-                <canvas id="gChart" width="300" height="250"></canvas>
-            </div>
-            
-            <div class="gauge">
-                <div class="gauge-title">加速度历史变化</div>
-                <canvas id="historyChart" height="250"></canvas>
-            </div>
-        </div>
-        
-        <div class="calibration-panel">
-            <div class="gauge-title">重力校准</div>
-            <p>为了获得准确的加速度测量值，请先进行重力校准：</p>
-            <ol class="calibration-steps">
-                <li>将手机平放在水平表面上（屏幕朝上）</li>
-                <li>点击"开始校准"按钮并保持手机静止3秒</li>
-                <li>校准完成后，应用将自动减去重力影响</li>
-            </ol>
-            <div class="controls">
-                <button id="calibrateBtn">开始校准</button>
-                <button id="startBtn">开始监测</button>
-                <button id="resetBtn">重置数据</button>
-            </div>
+
+            <main>
+                <div id="home" class="page active">
+                    <h2>欢迎来到我的个人空间</h2>
+                    <p>我是一名内容创作者，专注于制作科技、设计和生活方式的视频内容。在这里你可以找到我的社交媒体链接和最新作品。</p>
+                    
+                    <h3 style="margin-top: 30px;">最新视频</h3>
+                    <div id="videos-container" class="video-grid">
+                        <div class="loading">正在加载最新视频...</div>
+                    </div>
+                    
+                    <div class="content-grid" style="margin-top: 40px;">
+                        <div class="content-card">
+                            <h3>近期动态</h3>
+                            <p>正在筹备一个新的系列视频，预计下个月上线。</p>
+                        </div>
+                        <div class="content-card">
+                            <h3>粉丝福利</h3>
+                            <p>关注我的B站账号，参与抽奖活动赢取限量周边！</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="about" class="page">
+                    <h2>关于我</h2>
+                    <p>你好！我是樱玖卅，一名数字内容创作者。我拥有5年的内容创作经验。</p>
+                    
+                    <div class="content-grid">
+                        <div class="content-card">
+                            <h3>我的技能</h3>
+                            <p>视频制作、动画设计</p>
+                        </div>
+                        <div class="content-card">
+                            <h3>工作经历</h3>
+                            <p>暂无</p>
+                        </div>
+                        <div class="content-card">
+                            <h3>主页更新</h3>
+                            <p>等待加入多语言支持</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="projects" class="page">
+                    <h2>作品集</h2>
+                    <p>这里展示了我的一些代表性作品和项目。</p>
+                    
+                    <div class="content-grid">
+                        <div class="content-card">
+                            <h3>暂无</h3>
+                            <p>暂无</p>
+                        </div>
+                        <!-- <div class="content-card">
+                            <h3>UI设计作品</h3>
+                            <p>为多家科技公司设计的用户界面和体验方案</p>
+                        </div>
+                        <div class="content-card">
+                            <h3>互动艺术装置</h3>
+                            <p>在数字艺术展上展出的基于AR技术的互动装置</p>
+                        </div> -->
+                    </div>
+                </div>
+
+                <div id="contact" class="page">
+                    <h2>联系我</h2>
+                    <p>如有合作意向或任何问题，欢迎通过以下方式联系我：</p>
+                    
+                    <div class="content-grid">
+                        <div class="content-card">
+                            <h3>商务合作</h3>
+                            <p>邮箱: contact@sakuraix.cn</p>
+                        </div>
+                        <div class="content-card">
+                            <h3>社交媒体</h3>
+                            <p>所有平台账号: @SakuraIXI</p>
+                        </div>
+                        <div class="content-card">
+                            <h3>工作室地址</h3>
+                            <p>暂无</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer>
+                <p>© 2025 SakuraIXI. All rights reserved.</p>
+            </footer>
         </div>
     </div>
 
     <script>
-        // 全局变量
-        let isMonitoring = false;
-        let isCalibrating = false;
-        let calibrationSamples = [];
-        let gravityOffset = { x: 0, y: 0, z: 0 };
-        let historyData = {
-            labels: [],
-            datasets: [
-                {
-                    label: 'X轴 (左右)',
-                    data: [],
-                    borderColor: 'rgb(255, 82, 82)',
-                    tension: 0.1,
-                    pointRadius: 0
-                },
-                {
-                    label: 'Y轴 (前后)',
-                    data: [],
-                    borderColor: 'rgb(76, 175, 80)',
-                    tension: 0.1,
-                    pointRadius: 0
-                },
-                {
-                    label: 'Z轴 (垂直)',
-                    data: [],
-                    borderColor: 'rgb(68, 138, 255)',
-                    tension: 0.1,
-                    pointRadius: 0
-                }
-            ]
-        };
+        // 主题切换功能
+        const themeToggle = document.getElementById('theme-toggle');
         
-        // DOM元素
-        const xValue = document.getElementById('x-value');
-        const yValue = document.getElementById('y-value');
-        const zValue = document.getElementById('z-value');
-        const totalValue = document.getElementById('total-value');
-        const startBtn = document.getElementById('startBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const calibrateBtn = document.getElementById('calibrateBtn');
+        // 检查本地存储的主题偏好
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeToggle.checked = true;
+        }
         
-        // 初始化实时G值图表
-        const gChart = new Chart(document.getElementById('gChart'), {
-            type: 'bar',
-            data: {
-                labels: ['X轴', 'Y轴', 'Z轴'],
-                datasets: [{
-                    label: '当前G值',
-                    data: [0, 0, 0],
-                    backgroundColor: [
-                        'rgba(255, 82, 82, 0.7)',
-                        'rgba(76, 175, 80, 0.7)',
-                        'rgba(68, 138, 255, 0.7)'
-                    ],
-                    borderColor: [
-                        'rgb(255, 82, 82)',
-                        'rgb(76, 175, 80)',
-                        'rgb(68, 138, 255)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    title: {
-                        display: true,
-                        text: '三轴加速度 (G)'
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 2,
-                        min: -2,
-                        title: {
-                            display: true,
-                            text: '加速度 (G)'
-                        }
-                    }
-                }
-            }
-        });
-        
-        // 初始化历史数据图表
-        const historyChart = new Chart(document.getElementById('historyChart'), {
-            type: 'line',
-            data: historyData,
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: '时间 (秒)'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: '加速度 (G)'
-                        },
-                        suggestedMin: -2,
-                        suggestedMax: 2
-                    }
-                }
-            }
-        });
-        
-        // 开始/停止监测
-        startBtn.addEventListener('click', function() {
-            if (!isMonitoring) {
-                startMonitoring();
-                startBtn.textContent = '停止监测';
-                startBtn.style.background = '#ff5252';
+        themeToggle.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
             } else {
-                stopMonitoring();
-                startBtn.textContent = '开始监测';
-                startBtn.style.background = '#03dac6';
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
             }
         });
+
+        // 页面切换功能
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const pages = document.querySelectorAll('.page');
         
-        // 重置数据
-        resetBtn.addEventListener('click', function() {
-            historyData.labels = [];
-            historyData.datasets.forEach(dataset => {
-                dataset.data = [];
-            });
-            historyChart.update();
-        });
-        
-        // 校准重力
-        calibrateBtn.addEventListener('click', function() {
-            if (isMonitoring) {
-                alert("请先停止监测再进行校准");
-                return;
-            }
-            
-            startCalibration();
-        });
-        
-        // 开始校准
-        function startCalibration() {
-            isCalibrating = true;
-            calibrationSamples = [];
-            calibrateBtn.textContent = '校准中...';
-            calibrateBtn.disabled = true;
-            
-            // 监听设备运动3秒
-            window.addEventListener('devicemotion', calibrationHandler);
-            
-            // 3秒后完成校准
-            setTimeout(finishCalibration, 3000);
-        }
-        
-        // 校准处理函数
-        function calibrationHandler(event) {
-            const acceleration = event.accelerationIncludingGravity;
-            if (!acceleration) return;
-            
-            calibrationSamples.push({
-                x: acceleration.x / 9.81,
-                y: acceleration.y / 9.81,
-                z: acceleration.z / 9.81
-            });
-        }
-        
-        // 完成校准
-        function finishCalibration() {
-            window.removeEventListener('devicemotion', calibrationHandler);
-            
-            // 计算平均值作为重力偏移
-            const sampleCount = calibrationSamples.length;
-            if (sampleCount > 0) {
-                gravityOffset = calibrationSamples.reduce((sum, sample) => {
-                    return {
-                        x: sum.x + sample.x,
-                        y: sum.y + sample.y,
-                        z: sum.z + sample.z
-                    };
-                }, { x: 0, y: 0, z: 0 });
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetPage = this.getAttribute('data-page');
                 
-                gravityOffset.x /= sampleCount;
-                gravityOffset.y /= sampleCount;
-                gravityOffset.z /= sampleCount;
+                // 更新按钮状态
+                navBtns.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
                 
-                // 调整Z轴偏移，使其包含重力
-                gravityOffset.z -= 1;
-            }
-            
-            isCalibrating = false;
-            calibrateBtn.textContent = '校准完成';
-            
-            // 2秒后恢复按钮状态
-            setTimeout(() => {
-                calibrateBtn.textContent = '开始校准';
-                calibrateBtn.disabled = false;
-            }, 2000);
-        }
-        
-        // 开始监测
-        function startMonitoring() {
-            if (typeof DeviceMotionEvent.requestPermission === 'function') {
-                DeviceMotionEvent.requestPermission()
-                    .then(permissionState => {
-                        if (permissionState === 'granted') {
-                            startSensors();
-                        } else {
-                            alert('需要传感器权限才能使用此功能');
-                        }
-                    })
-                    .catch(console.error);
-            } else {
-                startSensors();
-            }
-        }
-        
-        function startSensors() {
-            isMonitoring = true;
-            window.addEventListener('devicemotion', handleMotionEvent);
-        }
-        
-        // 停止监测
-        function stopMonitoring() {
-            isMonitoring = false;
-            window.removeEventListener('devicemotion', handleMotionEvent);
-        }
-        
-        // 处理运动事件（添加重力补偿）
-        function handleMotionEvent(event) {
-            const acceleration = event.accelerationIncludingGravity;
-            if (!acceleration) return;
-            
-            // 转换为G值并应用重力补偿
-            const x = (acceleration.x / 9.81 - gravityOffset.x).toFixed(2);
-            const y = (acceleration.y / 9.81 - gravityOffset.y).toFixed(2);
-            const z = (acceleration.z / 9.81 - gravityOffset.z).toFixed(2);
-            
-            // 计算合成加速度
-            const total = Math.sqrt(x*x + y*y + z*z).toFixed(2);
-            
-            // 更新显示
-            xValue.textContent = `${x} G`;
-            yValue.textContent = `${y} G`;
-            zValue.textContent = `${z} G`;
-            totalValue.textContent = `${total} G`;
-            
-            // 更新实时图表
-            gChart.data.datasets[0].data = [x, y, z];
-            gChart.update();
-            
-            // 更新历史数据
-            const elapsedTime = (historyData.labels.length / 10).toFixed(1);
-            historyData.labels.push(elapsedTime);
-            historyData.datasets[0].data.push(x);
-            historyData.datasets[1].data.push(y);
-            historyData.datasets[2].data.push(z);
-            
-            // 保持数据点数量不超过100个
-            if (historyData.labels.length > 100) {
-                historyData.labels.shift();
-                historyData.datasets.forEach(dataset => {
-                    dataset.data.shift();
+                // 显示对应页面
+                pages.forEach(page => {
+                    page.classList.remove('active');
+                    if (page.id === targetPage) {
+                        page.classList.add('active');
+                    }
                 });
-            }
-            
-            historyChart.update();
+            });
+        });
+
+        // 模拟获取视频数据
+        function fetchLatestVideos() {
+            // 模拟API请求延迟
+            setTimeout(() => {
+                // 模拟视频数据
+                // const videos = [
+                //     {
+                //         title: "A person's world",
+                //         thumbnail: "https://i.ytimg.com/vi/1PeembZ6oB4/maxresdefault.jpg",
+                //         views: "12.5万",
+                //         date: "3天前",
+                //         platform: "youtube",
+                //         url: "#"
+                //     },
+                //     {
+                //         title: "一分钟学会CSS毛玻璃效果 | 前端教程",
+                //         thumbnail: "https://p16-sign-sg.tiktokcdn.com/obj/tos-alisg-p-0037/dfca5f5f624b4c6ea10746b5b0b6b89f?x-expires=1685984400&x-signature=G%2B6R7Bw3L1T%2B%2F7J%2B%2F%2B4GkZ%2F4G4%3D",
+                //         views: "45.2万",
+                //         date: "1周前",
+                //         platform: "tiktok",
+                //         url: "#"
+                //     },
+                //     {
+                //         title: "iPhone 15 全面评测：值得升级吗？",
+                //         thumbnail: "https://i0.hdslb.com/bfs/archive/1a2b3c4d5e6f7g8h9i0j.jpg",
+                //         views: "38.7万",
+                //         date: "2周前",
+                //         platform: "bilibili",
+                //         url: "#"
+                //     }
+                // ];
+                
+                displayVideos(videos);
+            }, 1500);
         }
-        
-        // 初始状态
-        stopMonitoring();
+
+        // 显示视频列表
+        function displayVideos(videos) {
+            const container = document.getElementById('videos-container');
+            container.innerHTML = '';
+            
+            videos.forEach(video => {
+                const platformNames = {
+                    'youtube': 'YouTube',
+                    'tiktok': 'TikTok',
+                    'bilibili': 'Bilibili'
+                };
+                
+                const platformClasses = {
+                    'youtube': 'youtube-badge',
+                    'tiktok': 'tiktok-badge',
+                    'bilibili': 'bilibili-badge'
+                };
+                
+                const videoCard = document.createElement('a');
+                videoCard.href = video.url;
+                videoCard.target = "_blank";
+                videoCard.classList.add('video-card');
+                videoCard.innerHTML = `
+                    <img src="${video.thumbnail}" alt="${video.title}" class="video-thumb">
+                    <div class="video-info">
+                        <div class="video-title">${video.title}</div>
+                        <div class="video-meta">
+                            <span>${video.views} 观看</span>
+                            <span>${video.date}</span>
+                        </div>
+                        <div class="platform-badge ${platformClasses[video.platform]}">
+                            ${platformNames[video.platform]}
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(videoCard);
+            });
+        }
+
+        // 页面加载完成后获取视频
+        document.addEventListener('DOMContentLoaded', fetchLatestVideos);
     </script>
 </body>
 </html>
